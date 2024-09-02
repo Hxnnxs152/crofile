@@ -1,0 +1,33 @@
+<h2>Hochgeladene Dateien</h2>
+<ul>
+    {% for file in files %}
+        <li>
+            {% if file.file_type == 'image' %}
+                <!-- Vorschau des Bildes -->
+                <img src="{{ file.file.url }}" alt="{{ file.file.name }}" style="width: 100px; height: auto; display: block; margin-bottom: 10px;">
+            {% elif file.file_type == 'pdf' %}
+                <!-- PDF-Link mit einer Textvorschau -->
+                <a href="{{ file.file.url }}" target="_blank">
+                    {{ file.file.name }} (PDF ansehen)
+                </a>
+            {% elif file.file_type == 'doc' %}
+                <!-- Dokumenten-Link -->
+                <a href="{{ file.file.url }}" target="_blank">
+                    {{ file.file.name }} (Word-Dokument)
+                </a>
+            {% elif file.file_type == 'xls' %}
+                <!-- Excel-Link -->
+                <a href="{{ file.file.url }}" target="_blank">
+                    {{ file.file.name }} (Excel-Tabelle)
+                </a>
+            {% else %}
+                <!-- Standardanzeige für unbekannte Dateitypen -->
+                <a href="{{ file.file.url }}" target="_blank">
+                    {{ file.file.name }} (Datei herunterladen)
+                </a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>Keine Dateien vorhanden.</li>
+    {% endfor %}
+</ul>
