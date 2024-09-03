@@ -27,6 +27,21 @@
         .upload-section {
             margin-bottom: 20px;
         }
+        #progress {
+            height: 25px;
+            width: 100%;
+            background: #f3f3f3;
+            border-radius: 5px;
+            overflow: hidden;
+            display: none;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0;
+            background: #4caf50;
+            text-align: center;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -34,12 +49,14 @@
 <div class="container mt-4">
     <h2 class="mb-4">Hochgeladene Dateien</h2>
     
-    <!-- Upload Button und Formular -->
+    <!-- Upload Formular -->
     <div class="upload-section">
-        <form method="post" enctype="multipart/form-data" class="form-inline">
+        <form id="upload-form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.file }}
-            <button type="submit" class="btn btn-primary ml-2">Datei hochladen</button>
+            <input type="file" id="file-input" name="file">
+            <div id="progress">
+                <div id="progress-bar">0%</div>
+            </div>
         </form>
     </div>
 
@@ -70,6 +87,54 @@
         {% endfor %}
     </div>
 </div>
+
+<!-- JavaScript für automatischen Upload und Fortschrittsanzeige -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('file-input');
+        const form = document.getElementById('upload-form');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress');
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percent = (e.loaded / e.total) * 100;
+                        progressContainer.style.display = 'block';
+                        progressBar.style.width = percent + '%';
+                        progressBar.textContent = Math.round(percent) + '%';
+                    }
+                });
+
+                xhr.addEventListener('load', function() {
+                    if (xhr.status === 200) {
+                        // Optional: Handle successful upload
+                        progressContainer.style.display = 'none';
+                        fileInput.value = '';  // Clear the file input after upload
+                        // Optionally refresh the file list
+                        location.reload();
+                    }
+                });
+
+                xhr.addEventListener('error', function() {
+                    // Handle upload error
+                    alert('Fehler beim Hochladen der Datei.');
+                });
+
+                xhr.send(formData);
+            }
+        });
+    });
+</script>
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
