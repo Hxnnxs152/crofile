@@ -1,17 +1,16 @@
 from django.shortcuts import render, redirect
-from .forms import FileUploadForm
-from .models import UploadedFile
+from .models import UploadedFile  # Model für die Dateien
+from .forms import FileUploadForm  # Formular für den Datei-Upload
 
-def upload_file(request):
+# Funktion für Datei-Liste und Datei-Upload
+def file_list(request):
     if request.method == 'POST':
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('file_list')
+            return redirect('file_list')  # Redirect zurück zur Liste nach dem Upload
     else:
         form = FileUploadForm()
-    return render(request, 'filemanager/upload.html', {'form': form})
-
-def file_list(request):
-    files = UploadedFile.objects.all()
-    return render(request, 'filemanager/file_list.html', {'files': files})
+    
+    files = UploadedFile.objects.all()  # Alle hochgeladenen Dateien abrufen
+    return render(request, 'filemanager/file_list.html', {'files': files, 'form': form})

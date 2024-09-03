@@ -24,12 +24,26 @@
             height: auto;
             margin-right: 15px;
         }
+        .upload-section {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container mt-4">
     <h2 class="mb-4">Hochgeladene Dateien</h2>
+    
+    <!-- Upload Button und Formular -->
+    <div class="upload-section">
+        <form method="post" enctype="multipart/form-data" class="form-inline">
+            {% csrf_token %}
+            {{ form.file }}
+            <button type="submit" class="btn btn-primary ml-2">Datei hochladen</button>
+        </form>
+    </div>
+
+    <!-- Datei-Liste -->
     <div class="row">
         {% for file in files %}
         <div class="col-md-4">
