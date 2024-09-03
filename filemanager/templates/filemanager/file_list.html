@@ -1,33 +1,66 @@
-<h2>Hochgeladene Dateien</h2>
-<ul>
-    {% for file in files %}
-        <li>
-            {% if file.file_type == 'image' %}
-                <!-- Vorschau des Bildes -->
-                <img src="{{ file.file.url }}" alt="{{ file.file.name }}" style="width: 100px; height: auto; display: block; margin-bottom: 10px;">
-            {% elif file.file_type == 'pdf' %}
-                <!-- PDF-Link mit einer Textvorschau -->
-                <a href="{{ file.file.url }}" target="_blank">
-                    {{ file.file.name }} (PDF ansehen)
-                </a>
-            {% elif file.file_type == 'doc' %}
-                <!-- Dokumenten-Link -->
-                <a href="{{ file.file.url }}" target="_blank">
-                    {{ file.file.name }} (Word-Dokument)
-                </a>
-            {% elif file.file_type == 'xls' %}
-                <!-- Excel-Link -->
-                <a href="{{ file.file.url }}" target="_blank">
-                    {{ file.file.name }} (Excel-Tabelle)
-                </a>
-            {% else %}
-                <!-- Standardanzeige für unbekannte Dateitypen -->
-                <a href="{{ file.file.url }}" target="_blank">
-                    {{ file.file.name }} (Datei herunterladen)
-                </a>
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>Keine Dateien vorhanden.</li>
-    {% endfor %}
-</ul>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dateiübersicht</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .file-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+        .file-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .file-icon {
+            width: 50px;
+            height: auto;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Hochgeladene Dateien</h2>
+    <div class="row">
+        {% for file in files %}
+        <div class="col-md-4">
+            <div class="file-card d-flex align-items-center">
+                {% if file.file_type == 'image' %}
+                    <img src="{{ file.file.url }}" alt="{{ file.file.name }}" class="file-icon" style="width: 100px; height: auto;">
+                {% elif file.file_type == 'pdf' %}
+                    <img src="{% static 'icons/pdf-icon.png' %}" alt="PDF" class="file-icon">
+                {% elif file.file_type == 'doc' %}
+                    <img src="{% static 'icons/doc-icon.png' %}" alt="DOC" class="file-icon">
+                {% elif file.file_type == 'xls' %}
+                    <img src="{% static 'icons/xls-icon.png' %}" alt="XLS" class="file-icon">
+                {% else %}
+                    <img src="{% static 'icons/file-icon.png' %}" alt="File" class="file-icon">
+                {% endif %}
+                <div>
+                    <a href="{{ file.file.url }}" class="d-block font-weight-bold">{{ file.file.name }}</a>
+                    <small class="text-muted">Hochgeladen am: {{ file.uploaded_at|date:"d.m.Y H:i" }}</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Keine Dateien vorhanden.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

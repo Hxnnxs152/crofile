@@ -10,10 +10,11 @@ class UploadedFile(models.Model):
 
     @property
     def file_type(self):
+        # Ermittelt den Dateityp basierend auf der Dateiendung
         ext = os.path.splitext(self.file.name)[1].lower()
         if ext in ['.jpg', '.jpeg', '.png', '.gif']:
             return 'image'
-        elif ext == '.pdf':
+        elif ext in ['.pdf']:
             return 'pdf'
         elif ext in ['.doc', '.docx']:
             return 'doc'
